@@ -63,3 +63,10 @@
 - [x] Add backend validation for odds limit
 - [x] Display max odds hint in AddBetDialog
 - [x] Show error if user exceeds challenge odds limit
+
+## Challenge Management
+- [x] Add edit challenge button to ChallengeDetail
+- [x] Add delete challenge button to ChallengeDetail
+- [x] Create EditChallengeDialog component
+- [x] Verify odds input is visible in AddBetDialog
+- [x] Test edit and delete functionality

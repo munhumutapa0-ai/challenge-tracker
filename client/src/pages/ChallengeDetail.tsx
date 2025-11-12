@@ -4,7 +4,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Progress } from "@/components/ui/progress";
 import { APP_TITLE } from "@/const";
 import { trpc } from "@/lib/trpc";
-import { ArrowLeft, CheckCircle2, Loader2, Plus, XCircle, Trophy, TrendingUp } from "lucide-react";
+import { ArrowLeft, CheckCircle2, Loader2, Plus, XCircle, Trophy, TrendingUp, Edit2, Trash2 } from "lucide-react";
 import { useState } from "react";
 import { Link, useRoute } from "wouter";
 import AddBetDialog from "@/components/AddBetDialog";
@@ -15,6 +15,7 @@ export default function ChallengeDetail() {
   const challengeId = params?.id ? parseInt(params.id) : 0;
   const { isAuthenticated } = useAuth();
   const [addBetDialogOpen, setAddBetDialogOpen] = useState(false);
+  const [editDialogOpen, setEditDialogOpen] = useState(false);
 
   const { data: challenge, isLoading } = trpc.challenge.getById.useQuery(
     { id: challengeId },
@@ -42,6 +43,23 @@ export default function ChallengeDetail() {
       toast.error(error.message || "Failed to update challenge status");
     },
   });
+
+  const deleteMutation = trpc.challenge.delete.useMutation({
+    onSuccess: () => {
+      toast.success("Challenge deleted!");
+      utils.challenge.list.invalidate();
+      window.location.href = "/";
+    },
+    onError: (error) => {
+      toast.error(error.message || "Failed to delete challenge");
+    },
+  });
+
+  const handleDelete = () => {
+    if (confirm("Are you sure you want to delete this challenge? This action cannot be undone.")) {
+      deleteMutation.mutate({ id: challengeId });
+    }
+  };
 
   if (isLoading) {
     return (
@@ -117,17 +135,40 @@ export default function ChallengeDetail() {
             </Button>
             <h1 className="text-lg sm:text-xl md:text-2xl font-bold text-foreground truncate">{challenge.name}</h1>
           </div>
-          <span
-            className={`text-sm px-3 py-1 rounded-full font-medium ${
-              challenge.status === "active"
-                ? "bg-primary/10 text-primary"
-                : challenge.status === "completed"
-                ? "bg-green-500/10 text-green-600"
-                : "bg-destructive/10 text-destructive"
-            }`}
-          >
-            {challenge.status}
-          </span>
+          <div className="flex items-center gap-2">
+            <span
+              className={`text-sm px-3 py-1 rounded-full font-medium ${
+                challenge.status === "active"
+                  ? "bg-primary/10 text-primary"
+                  : challenge.status === "completed"
+                  ? "bg-green-500/10 text-green-600"
+                  : "bg-destructive/10 text-destructive"
+              }`}
+            >
+              {challenge.status}
+            </span>
+            {challenge.status === "active" && (
+              <>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setEditDialogOpen(true)}
+                  title="Edit challenge"
+                >
+                  <Edit2 className="h-4 w-4" />
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={handleDelete}
+                  disabled={deleteMutation.isPending}
+                  title="Delete challenge"
+                >
+                  <Trash2 className="h-4 w-4 text-destructive" />
+                </Button>
+              </>
+            )}
+          </div>
         </div>
       </header>
 
@@ -309,6 +350,39 @@ export default function ChallengeDetail() {
         nextStake={nextStake}
         maxOdds={challenge.odds}
       />
+
+      {editDialogOpen && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <div className="bg-card rounded-lg max-w-md w-full p-6 space-y-4">
+            <h2 className="text-xl font-bold text-foreground">Challenge Details</h2>
+            <div className="space-y-2 text-sm">
+              <p className="text-muted-foreground">Name: <span className="font-semibold text-foreground">{challenge.name}</span></p>
+              <p className="text-muted-foreground">Initial stake: <span className="font-semibold text-foreground">R{challenge.initialStake.toFixed(2)}</span></p>
+              <p className="text-muted-foreground">Target: <span className="font-semibold text-foreground">R{challenge.targetAmount.toFixed(2)}</span></p>
+              <p className="text-muted-foreground">Max odds: <span className="font-semibold text-foreground">{challenge.odds.toFixed(2)}x</span></p>
+              <p className="text-muted-foreground">Strategy: <span className="font-semibold text-foreground">{challenge.strategy === "compound" ? "Compound" : "Take Profit"}</span></p>
+            </div>
+            <div className="bg-yellow-500/10 border border-yellow-500/20 rounded p-3 text-sm text-yellow-700">
+              Note: To change challenge settings, delete this challenge and create a new one.
+            </div>
+            <div className="flex gap-3 justify-end pt-4">
+              <Button variant="outline" onClick={() => setEditDialogOpen(false)}>
+                Close
+              </Button>
+              <Button
+                variant="destructive"
+                onClick={() => {
+                  setEditDialogOpen(false);
+                  handleDelete();
+                }}
+                disabled={deleteMutation.isPending}
+              >
+                {deleteMutation.isPending ? "Deleting..." : "Delete"}
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
