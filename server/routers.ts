@@ -111,6 +111,7 @@ export const appRouter = router({
         teamName: z.string().min(1),
         matchDetails: z.string().optional(),
         stakeAmount: z.number().positive(),
+        odds: z.number().min(1.01).max(1.3),
       }))
       .mutation(async ({ ctx, input }) => {
         const challenge = await db.getChallengeById(input.challengeId);
@@ -124,6 +125,7 @@ export const appRouter = router({
           teamName: input.teamName,
           matchDetails: input.matchDetails || null,
           stakeAmount: Math.round(input.stakeAmount * 100),
+          odds: Math.round(input.odds * 100),
           result: "pending",
           profit: 0,
         });
@@ -147,11 +149,11 @@ export const appRouter = router({
           throw new TRPCError({ code: "FORBIDDEN" });
         }
 
-        // Calculate profit
+        // Calculate profit using bet-specific odds
         let profit = 0;
         if (input.result === "win") {
           // Profit = stake * (odds - 1)
-          profit = Math.round(bet.stakeAmount * (challenge.odds / 100 - 1));
+          profit = Math.round(bet.stakeAmount * (bet.odds / 100 - 1));
         } else {
           // Loss = -stake
           profit = -bet.stakeAmount;

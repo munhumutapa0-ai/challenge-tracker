@@ -1,0 +1,1 @@
+ALTER TABLE `bets` ADD `odds` int NOT NULL;

@@ -195,7 +195,7 @@ export default function ChallengeDetail() {
               <span className="font-semibold text-foreground">Current stake:</span> R{nextStake.toFixed(2)}
             </p>
             <p>
-              <span className="font-semibold text-foreground">Potential win:</span> R{(nextStake * challenge.odds).toFixed(2)}
+              <span className="font-semibold text-foreground">Note:</span> Each bet can have different odds (1.01 - 1.3)
             </p>
           </CardContent>
         </Card>
@@ -228,9 +228,12 @@ export default function ChallengeDetail() {
                       {bet.matchDetails && (
                         <p className="text-sm text-muted-foreground mt-1">{bet.matchDetails}</p>
                       )}
-                      <div className="flex gap-4 mt-2 text-sm">
+                      <div className="flex flex-wrap gap-3 mt-2 text-sm">
                         <span className="text-muted-foreground">
                           Stake: <span className="font-medium text-foreground">R{bet.stakeAmount.toFixed(2)}</span>
+                        </span>
+                        <span className="text-muted-foreground">
+                          Odds: <span className="font-medium text-foreground">{bet.odds.toFixed(2)}x</span>
                         </span>
                         {bet.result !== "pending" && (
                           <span className="text-muted-foreground">

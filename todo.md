@@ -40,3 +40,11 @@
 - [x] Update favicon with new logo (user needs to update in Settings UI)
 - [x] Push to GitHub
 - [x] Publish application (ready for user to click Publish button)
+
+## Custom Odds Feature
+- [x] Update bets table to store odds per bet
+- [x] Update AddBetDialog to accept custom odds input (max 1.3)
+- [x] Update profit calculation to use custom odds per bet
+- [x] Display custom odds in bet history
+- [x] Update ChallengeDetail to show odds for each bet
+- [x] Test custom odds calculations

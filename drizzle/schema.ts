@@ -47,6 +47,7 @@ export const bets = mysqlTable("bets", {
   teamName: varchar("teamName", { length: 255 }).notNull(),
   matchDetails: text("matchDetails"),
   stakeAmount: int("stakeAmount").notNull(), // in cents
+  odds: int("odds").notNull(), // stored as 125 for 1.25 odds (multiply by 100)
   result: mysqlEnum("result", ["pending", "win", "loss"]).default("pending").notNull(),
   profit: int("profit").default(0).notNull(), // in cents, can be negative
   createdAt: timestamp("createdAt").defaultNow().notNull(),
