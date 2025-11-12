@@ -1,4 +1,5 @@
 import { useAuth } from "@/_core/hooks/useAuth";
+import PageHeader from "@/components/PageHeader";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
@@ -124,55 +125,45 @@ export default function ChallengeDetail() {
 
   return (
     <div className="min-h-screen bg-background">
-      <header className="border-b bg-card sticky top-0 z-10">
-        <div className="container py-3 sm:py-4 flex items-center justify-between gap-2">
-          <div className="flex items-center gap-4">
-            <Button variant="ghost" size="sm" asChild>
-              <Link href="/">
-                <ArrowLeft className="h-4 w-4 mr-2" />
-                Back
-              </Link>
-            </Button>
-            <h1 className="text-lg sm:text-xl md:text-2xl font-bold text-foreground truncate">{challenge.name}</h1>
-          </div>
-          <div className="flex items-center gap-2">
-            <span
-              className={`text-sm px-3 py-1 rounded-full font-medium ${
-                challenge.status === "active"
-                  ? "bg-primary/10 text-primary"
-                  : challenge.status === "completed"
-                  ? "bg-green-500/10 text-green-600"
-                  : "bg-destructive/10 text-destructive"
-              }`}
+      <PageHeader title={challenge.name} description={`${challenge.daysTotal} days • ${(challenge.odds / 100).toFixed(2)}x odds`} />
+      <div className="container py-4 flex items-center justify-between gap-2">
+        <span
+          className={`text-sm px-3 py-1 rounded-full font-medium ${
+            challenge.status === "active"
+              ? "bg-primary/10 text-primary"
+              : challenge.status === "completed"
+              ? "bg-green-500/10 text-green-600"
+              : "bg-destructive/10 text-destructive"
+          }`}
+        >
+          {challenge.status}
+        </span>
+        {challenge.status === "active" && (
+          <div className="flex gap-2">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setEditDialogOpen(true)}
+              title="Edit challenge"
             >
-              {challenge.status}
-            </span>
-            {challenge.status === "active" && (
-              <>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => setEditDialogOpen(true)}
-                  title="Edit challenge"
-                >
-                  <Edit2 className="h-4 w-4" />
-                </Button>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={handleDelete}
-                  disabled={deleteMutation.isPending}
-                  title="Delete challenge"
-                >
-                  <Trash2 className="h-4 w-4 text-destructive" />
-                </Button>
-              </>
-            )}
+              <Edit2 className="h-4 w-4 mr-2" />
+              Edit
+            </Button>
+            <Button
+              variant="destructive"
+              size="sm"
+              onClick={handleDelete}
+              disabled={deleteMutation.isPending}
+              title="Delete challenge"
+            >
+              {deleteMutation.isPending ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <Trash2 className="h-4 w-4 mr-2" />}
+              Delete
+            </Button>
           </div>
-        </div>
-      </header>
+        )}
+      </div>
 
-      <main className="container py-8 space-y-6">
+      <main className="container py-6 sm:py-8 space-y-6">
         {/* Progress Overview */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4">
           <Card className="bg-card text-card-foreground">

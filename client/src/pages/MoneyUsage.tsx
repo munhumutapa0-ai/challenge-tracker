@@ -1,4 +1,5 @@
 import { useAuth } from "@/_core/hooks/useAuth";
+import PageHeader from "@/components/PageHeader";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
@@ -70,16 +71,16 @@ export default function MoneyUsage() {
 
   return (
     <div className="min-h-screen bg-background">
-      <header className="border-b bg-card sticky top-0 z-10">
-        <div className="container py-3 sm:py-4 flex items-center justify-between gap-2">
-          <h1 className="text-xl sm:text-2xl font-bold text-foreground">Money Usage Tracking</h1>
-          <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-            <DialogTrigger asChild>
-              <Button size="sm">
-                <Plus className="h-4 w-4 mr-2" />
-                Log Expense
-              </Button>
-            </DialogTrigger>
+      <PageHeader title="Money Usage" description="Track your expenses and spending" />
+      <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+        <div className="container py-4 flex justify-end">
+          <DialogTrigger asChild>
+            <Button size="sm">
+              <Plus className="h-4 w-4 mr-2" />
+              Log Expense
+            </Button>
+          </DialogTrigger>
+        </div>
             <DialogContent className="bg-card">
               <DialogHeader>
                 <DialogTitle>Log Expense</DialogTitle>
@@ -138,11 +139,9 @@ export default function MoneyUsage() {
                 </Button>
               </div>
             </DialogContent>
-          </Dialog>
-        </div>
-      </header>
+      </Dialog>
 
-      <main className="container py-8">
+      <main className="container py-6 sm:py-8">
         <div className="space-y-6">
           <div>
             <h2 className="text-3xl font-bold text-foreground mb-2">Spending Overview</h2>

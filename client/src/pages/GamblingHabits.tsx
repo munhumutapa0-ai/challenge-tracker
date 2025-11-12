@@ -1,4 +1,5 @@
 import { useAuth } from "@/_core/hooks/useAuth";
+import PageHeader from "@/components/PageHeader";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -17,13 +18,37 @@ export default function GamblingHabits() {
     enabled: isAuthenticated,
   });
 
+  const { data: challenges } = trpc.challenge.list.useQuery(undefined, {
+    enabled: isAuthenticated,
+  });
+
+  // Determine monthly limit based on active challenges
+  const getMonthlyLimit = () => {
+    if (!challenges || challenges.length === 0) return 10000;
+    
+    const activeChallenges = challenges.filter(c => c.status === "active");
+    if (activeChallenges.length === 0) return 10000;
+    
+    // Check if any active challenge uses compound strategy
+    const hasCompound = activeChallenges.some(c => c.strategy === "compound");
+    
+    if (hasCompound) {
+      return 10000; // Compound strategy: 10,000 monthly limit
+    } else {
+      // All take-profit: use daily limit
+      return parseFloat(formData.dailyLimit);
+    }
+  };
+
   const [formData, setFormData] = useState({
-    dailyLimit: habits?.dailyLimit.toString() || "500",
-    weeklyLimit: habits?.weeklyLimit.toString() || "3000",
+    dailyLimit: habits?.dailyLimit.toString() || "10000",
+    weeklyLimit: habits?.weeklyLimit.toString() || "10000",
     monthlyLimit: habits?.monthlyLimit.toString() || "10000",
     enableAlerts: habits?.enableAlerts ?? true,
     alertThreshold: habits?.alertThreshold ?? 80,
   });
+
+  const effectiveMonthlyLimit = getMonthlyLimit();
 
   const updateHabitsMutation = trpc.habits.update.useMutation({
     onSuccess: () => {
@@ -76,20 +101,7 @@ export default function GamblingHabits() {
 
   return (
     <div className="min-h-screen bg-background">
-      <header className="border-b bg-card sticky top-0 z-10">
-        <div className="container py-3 sm:py-4 flex items-center justify-between gap-2">
-          <h1 className="text-xl sm:text-2xl font-bold text-foreground flex items-center gap-2">
-            <Shield className="h-6 w-6 text-primary" />
-            Gambling Habits Control
-          </h1>
-          {!isEditing && (
-            <Button onClick={() => setIsEditing(true)} size="sm">
-              Edit Limits
-            </Button>
-          )}
-        </div>
-      </header>
-
+      <PageHeader title="Gambling Habits Control" description="Set and monitor your betting limits" />
       <main className="container py-6 sm:py-8">
         <div className="space-y-6">
           <div className="space-y-2">
@@ -169,19 +181,17 @@ export default function GamblingHabits() {
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="monthly-limit" className="text-sm font-medium">Monthly Limit (R) - Max 10,000</Label>
-                  <Input
-                    id="monthly-limit"
-                    type="number"
-                    max="10000"
-                    value={formData.monthlyLimit}
-                    onChange={(e) => {
-                      const val = Math.min(parseFloat(e.target.value) || 0, 10000);
-                      setFormData({ ...formData, monthlyLimit: val.toString() });
-                    }}
-                    className="bg-background border-border"
-                  />
-                  <p className="text-xs text-muted-foreground">Maximum monthly limit is R10,000</p>
+                  <Label htmlFor="monthly-limit" className="text-sm font-medium">Monthly Limit (R)</Label>
+                  <div className="p-3 bg-muted rounded">
+                    <p className="text-sm font-bold text-foreground">R{effectiveMonthlyLimit.toFixed(2)}</p>
+                    <p className="text-xs text-muted-foreground mt-1">
+                      {challenges?.some(c => c.status === "active" && c.strategy === "compound")
+                        ? "Compound strategy active: 10,000 limit"
+                        : challenges?.some(c => c.status === "active" && c.strategy === "take-profit")
+                        ? `Take-profit strategy active: Daily limit (R${formData.dailyLimit})`
+                        : "No active challenges: 10,000 limit"}
+                    </p>
+                  </div>
                 </div>
                 <div className="flex gap-2 pt-4">
                   <Button onClick={handleSave} disabled={updateHabitsMutation.isPending} className="flex-1">

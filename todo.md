@@ -111,3 +111,10 @@
 - [x] Responsive padding and margins
 - [x] Test mobile layout
 - [x] Add 10,000 monthly limit to Gambling Habits page
+
+## Navigation Headers
+- [ ] Add back/home button to Budget page
+- [ ] Add back/home button to MoneyUsage page
+- [ ] Add back/home button to GamblingHabits page
+- [ ] Add back/home button to Analytics page
+- [ ] Add back/home button to ChallengeDetail page
