@@ -90,11 +90,11 @@ export default function GamblingHabits() {
         </div>
       </header>
 
-      <main className="container py-8">
+      <main className="container py-6 sm:py-8">
         <div className="space-y-6">
-          <div>
-            <h2 className="text-3xl font-bold text-foreground mb-2">Responsible Gambling</h2>
-            <p className="text-muted-foreground">Set and monitor your betting limits to maintain healthy gambling habits</p>
+          <div className="space-y-2">
+            <h2 className="text-2xl sm:text-3xl font-bold text-foreground">Responsible Gambling</h2>
+            <p className="text-sm sm:text-base text-muted-foreground">Set and monitor your betting limits to maintain healthy gambling habits</p>
           </div>
 
           {/* Alert Settings */}
@@ -148,35 +148,40 @@ export default function GamblingHabits() {
                 <CardDescription>Define your daily, weekly, and monthly betting budgets</CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
-                <div>
-                  <Label htmlFor="daily-limit">Daily Limit (R)</Label>
+                <div className="space-y-2">
+                  <Label htmlFor="daily-limit" className="text-sm font-medium">Daily Limit (R)</Label>
                   <Input
                     id="daily-limit"
                     type="number"
                     value={formData.dailyLimit}
                     onChange={(e) => setFormData({ ...formData, dailyLimit: e.target.value })}
-                    className="bg-background border-border mt-2"
+                    className="bg-background border-border"
                   />
                 </div>
-                <div>
-                  <Label htmlFor="weekly-limit">Weekly Limit (R)</Label>
+                <div className="space-y-2">
+                  <Label htmlFor="weekly-limit" className="text-sm font-medium">Weekly Limit (R)</Label>
                   <Input
                     id="weekly-limit"
                     type="number"
                     value={formData.weeklyLimit}
                     onChange={(e) => setFormData({ ...formData, weeklyLimit: e.target.value })}
-                    className="bg-background border-border mt-2"
+                    className="bg-background border-border"
                   />
                 </div>
-                <div>
-                  <Label htmlFor="monthly-limit">Monthly Limit (R)</Label>
+                <div className="space-y-2">
+                  <Label htmlFor="monthly-limit" className="text-sm font-medium">Monthly Limit (R) - Max 10,000</Label>
                   <Input
                     id="monthly-limit"
                     type="number"
+                    max="10000"
                     value={formData.monthlyLimit}
-                    onChange={(e) => setFormData({ ...formData, monthlyLimit: e.target.value })}
-                    className="bg-background border-border mt-2"
+                    onChange={(e) => {
+                      const val = Math.min(parseFloat(e.target.value) || 0, 10000);
+                      setFormData({ ...formData, monthlyLimit: val.toString() });
+                    }}
+                    className="bg-background border-border"
                   />
+                  <p className="text-xs text-muted-foreground">Maximum monthly limit is R10,000</p>
                 </div>
                 <div className="flex gap-2 pt-4">
                   <Button onClick={handleSave} disabled={updateHabitsMutation.isPending} className="flex-1">
@@ -190,7 +195,7 @@ export default function GamblingHabits() {
               </CardContent>
             </Card>
           ) : (
-            <div className="grid gap-4 md:grid-cols-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
               {/* Daily Limit */}
               <Card className={`bg-card text-card-foreground ${isDailyExceeded ? "border-red-500/50" : isDailyAlert ? "border-yellow-500/50" : ""}`}>
                 <CardHeader>

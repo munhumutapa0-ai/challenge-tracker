@@ -102,3 +102,12 @@
 - [x] Create PDF export for expenses
 - [x] Add export buttons to pages
 - [x] Test PDF generation
+
+## Mobile Navigation & UI Polish
+- [x] Create mobile drawer navigation component
+- [x] Hide horizontal nav on mobile, show drawer menu
+- [x] Improve text alignment and spacing
+- [x] Professional typography hierarchy
+- [x] Responsive padding and margins
+- [x] Test mobile layout
+- [x] Add 10,000 monthly limit to Gambling Habits page

@@ -7,10 +7,13 @@ import { Loader2, Plus, Target, TrendingUp, LogOut, PieChart, Wallet, Shield, Ci
 import { useState } from "react";
 import { Link } from "wouter";
 import CreateChallengeDialog from "@/components/CreateChallengeDialog";
+import MobileNav from "@/components/MobileNav";
+import { useLocation } from "wouter";
 
 export default function Home() {
   const { user, loading, isAuthenticated, logout } = useAuth();
   const [createDialogOpen, setCreateDialogOpen] = useState(false);
+  const [location] = useLocation();
   
   const { data: challenges, isLoading: challengesLoading } = trpc.challenge.list.useQuery(
     undefined,
@@ -99,22 +102,23 @@ export default function Home() {
     <div className="min-h-screen bg-background">
       <header className="border-b bg-card sticky top-0 z-10">
         <div className="container py-3 sm:py-4 flex items-center justify-between gap-2">
-          <h1 className="text-xl sm:text-2xl font-bold text-foreground truncate">{APP_TITLE}</h1>
-          <div className="flex items-center gap-2 sm:gap-4">
+          <h1 className="text-lg sm:text-2xl font-bold text-foreground truncate">{APP_TITLE}</h1>
+          <div className="flex items-center gap-1 sm:gap-4">
             <span className="hidden sm:inline text-sm text-muted-foreground">Welcome, {user?.name}</span>
-            <Button onClick={() => setCreateDialogOpen(true)} size="sm">
+            <Button onClick={() => setCreateDialogOpen(true)} size="sm" className="hidden sm:flex">
               <Plus className="h-4 w-4 mr-2" />
               New Challenge
             </Button>
-            <Button onClick={() => logout()} variant="outline" size="sm" title="Logout">
+            <Button onClick={() => logout()} variant="outline" size="sm" title="Logout" className="hidden sm:flex">
               <LogOut className="h-4 w-4" />
             </Button>
+            <MobileNav currentPath={location} />
           </div>
         </div>
       </header>
 
-      {/* Navigation Menu */}
-      <nav className="border-b bg-card">
+      {/* Navigation Menu - Desktop Only */}
+      <nav className="hidden md:block border-b bg-card">
         <div className="container py-3 flex gap-2 overflow-x-auto">
           <Link href="/" className="px-4 py-2 rounded-lg bg-primary text-primary-foreground text-sm font-medium whitespace-nowrap">
             Challenges
@@ -138,11 +142,11 @@ export default function Home() {
         </div>
       </nav>
 
-      <main className="container py-8">
+      <main className="container py-6 sm:py-8">
         <div className="space-y-6">
-          <div>
-            <h2 className="text-3xl font-bold text-foreground mb-2">Your Challenges</h2>
-            <p className="text-muted-foreground">
+          <div className="space-y-2">
+            <h2 className="text-2xl sm:text-3xl font-bold text-foreground">Your Challenges</h2>
+            <p className="text-sm sm:text-base text-muted-foreground">
               Manage your betting challenges and track your progress
             </p>
           </div>
@@ -152,7 +156,7 @@ export default function Home() {
               <Loader2 className="h-8 w-8 animate-spin text-primary" />
             </div>
           ) : challenges && challenges.length > 0 ? (
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
               {challenges.map((challenge) => (
                 <Link key={challenge.id} href={`/challenge/${challenge.id}`}>
                   <Card className="hover:shadow-lg transition-shadow cursor-pointer bg-card text-card-foreground">
@@ -193,13 +197,15 @@ export default function Home() {
             </div>
           ) : (
             <Card className="bg-card text-card-foreground">
-              <CardContent className="py-12 text-center">
-                <Target className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-                <h3 className="text-lg font-semibold text-foreground mb-2">No challenges yet</h3>
-                <p className="text-muted-foreground mb-4">
-                  Create your first betting challenge to get started
-                </p>
-                <Button onClick={() => setCreateDialogOpen(true)}>
+              <CardContent className="py-12 text-center space-y-4">
+                <Target className="h-12 w-12 text-muted-foreground mx-auto" />
+                <div className="space-y-2">
+                  <h3 className="text-lg font-semibold text-foreground">No challenges yet</h3>
+                  <p className="text-sm sm:text-base text-muted-foreground">
+                    Create your first betting challenge to get started
+                  </p>
+                </div>
+                <Button onClick={() => setCreateDialogOpen(true)} className="w-full sm:w-auto">
                   <Plus className="h-4 w-4 mr-2" />
                   Create Challenge
                 </Button>
