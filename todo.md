@@ -93,3 +93,12 @@
 - [ ] Add responsible gambling tips and warnings
 - [ ] Integrate budget with challenge tracking
 - [ ] Add spending limits and alerts
+
+## PDF Export & Analytics
+- [x] Create Analytics Dashboard page
+- [x] Add profit/loss calculations for dashboard
+- [x] Add win rate and ROI metrics
+- [x] Create PDF export for challenges
+- [x] Create PDF export for expenses
+- [x] Add export buttons to pages
+- [x] Test PDF generation

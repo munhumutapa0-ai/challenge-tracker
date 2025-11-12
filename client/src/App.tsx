@@ -9,6 +9,7 @@ import ChallengeDetail from "./pages/ChallengeDetail";
 import Budget from "./pages/Budget";
 import MoneyUsage from "./pages/MoneyUsage";
 import GamblingHabits from "./pages/GamblingHabits";
+import Analytics from "./pages/Analytics";
 
 function Router() {
   // make sure to consider if you need authentication for certain routes
@@ -19,6 +20,7 @@ function Router() {
       <Route path="/budget" component={Budget} />
       <Route path="/money-usage" component={MoneyUsage} />
       <Route path="/gambling-habits" component={GamblingHabits} />
+      <Route path="/analytics" component={Analytics} />
       <Route path={"/404"} component={NotFound} />
       {/* Final fallback route */}
       <Route component={NotFound} />
