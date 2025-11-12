@@ -27,6 +27,7 @@ export const appRouter = router({
         targetAmount: z.number().positive(),
         odds: z.number().positive(),
         daysTotal: z.number().int().positive(),
+        strategy: z.enum(["compound", "take-profit"]).default("compound"),
       }))
       .mutation(async ({ ctx, input }) => {
         const challengeId = await db.createChallenge({
@@ -36,6 +37,7 @@ export const appRouter = router({
           targetAmount: Math.round(input.targetAmount * 100),
           odds: Math.round(input.odds * 100), // 1.3 becomes 130
           daysTotal: input.daysTotal,
+          strategy: input.strategy,
           status: "active",
         });
         return { id: challengeId };

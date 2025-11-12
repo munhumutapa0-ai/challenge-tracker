@@ -1,0 +1,1 @@
+ALTER TABLE `challenges` ADD `strategy` enum('compound','take-profit') DEFAULT 'compound' NOT NULL;

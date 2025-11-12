@@ -29,6 +29,7 @@ export const challenges = mysqlTable("challenges", {
   targetAmount: int("targetAmount").notNull(), // in cents
   odds: int("odds").notNull(), // stored as 130 for 1.3 odds (multiply by 100)
   daysTotal: int("daysTotal").notNull(),
+  strategy: mysqlEnum("strategy", ["compound", "take-profit"]).default("compound").notNull(), // compound: reinvest all, take-profit: keep stake fixed
   status: mysqlEnum("status", ["active", "completed", "failed"]).default("active").notNull(),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),

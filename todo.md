@@ -48,3 +48,12 @@
 - [x] Display custom odds in bet history
 - [x] Update ChallengeDetail to show odds for each bet
 - [x] Test custom odds calculations
+
+## Flexible Strategy & Days Calculator
+- [x] Add reinvestment strategy column to challenges table (compound vs take-profit)
+- [x] Update CreateChallengeDialog with strategy selection
+- [x] Create DaysCalculator component for estimating days needed
+- [x] Update profit calculation based on selected strategy
+- [x] Update ChallengeDetail to show strategy info
+- [x] Update next stake calculation for take-profit strategy
+- [x] Test both strategies with different odds

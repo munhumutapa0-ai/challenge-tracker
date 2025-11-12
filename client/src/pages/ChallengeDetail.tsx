@@ -71,8 +71,26 @@ export default function ChallengeDetail() {
     return acc;
   }, challenge.initialStake);
 
-  const nextStake = currentBalance;
-  const progress = Math.min((currentBalance / challenge.targetAmount) * 100, 100);
+  // Calculate next stake based on strategy
+  const nextStake = challenge.strategy === "compound" 
+    ? currentBalance 
+    : challenge.initialStake;
+  
+  // For take-profit strategy, track accumulated profit separately
+  const accumulatedProfit = challenge.strategy === "take-profit"
+    ? bets.reduce((acc, bet) => {
+      if (bet.result === "win") return acc + bet.profit;
+      if (bet.result === "loss") return acc - bet.stakeAmount;
+      return acc;
+    }, 0)
+    : 0;
+  
+  // For take-profit strategy, total is stake + accumulated profit
+  const displayBalance = challenge.strategy === "take-profit"
+    ? challenge.initialStake + accumulatedProfit
+    : currentBalance;
+
+  const progress = Math.min((displayBalance / challenge.targetAmount) * 100, 100);
   const completedBets = bets.filter(b => b.result !== "pending").length;
   const wins = bets.filter(b => b.result === "win").length;
   const losses = bets.filter(b => b.result === "loss").length;
@@ -82,7 +100,7 @@ export default function ChallengeDetail() {
   };
 
   const handleCompleteChallenge = () => {
-    const status = currentBalance >= challenge.targetAmount ? "completed" : "failed";
+    const status = displayBalance >= challenge.targetAmount ? "completed" : "failed";
     updateStatusMutation.mutate({ id: challengeId, status });
   };
 
@@ -119,7 +137,7 @@ export default function ChallengeDetail() {
           <Card className="bg-card text-card-foreground">
             <CardHeader className="pb-3">
               <CardDescription>Current Balance</CardDescription>
-              <CardTitle className="text-xl sm:text-2xl">R{currentBalance.toFixed(2)}</CardTitle>
+              <CardTitle className="text-xl sm:text-2xl">R{displayBalance.toFixed(2)}</CardTitle>
             </CardHeader>
           </Card>
 
@@ -176,12 +194,12 @@ export default function ChallengeDetail() {
           </CardContent>
         </Card>
 
-        {/* Compound Growth Info */}
+        {/* Strategy Info */}
         <Card className="bg-primary/5 border-primary/20 text-card-foreground">
           <CardHeader>
             <div className="flex items-center gap-2">
               <TrendingUp className="h-5 w-5 text-primary" />
-              <CardTitle className="text-lg">Compound Betting Strategy</CardTitle>
+              <CardTitle className="text-lg">{challenge.strategy === "compound" ? "Compound" : "Take Profit"} Strategy</CardTitle>
             </div>
           </CardHeader>
           <CardContent className="space-y-2 text-sm">
@@ -189,11 +207,16 @@ export default function ChallengeDetail() {
               <span className="font-semibold text-foreground">Odds:</span> {challenge.odds}x per bet
             </p>
             <p>
-              <span className="font-semibold text-foreground">Strategy:</span> Reinvest entire balance (stake + profit) on each winning bet
+              <span className="font-semibold text-foreground">Strategy:</span> {challenge.strategy === "compound" ? "Reinvest entire balance (stake + profit) on each winning bet" : "Keep initial stake fixed, accumulate profit separately"}
             </p>
             <p>
               <span className="font-semibold text-foreground">Current stake:</span> R{nextStake.toFixed(2)}
             </p>
+            {challenge.strategy === "take-profit" && (
+              <p>
+                <span className="font-semibold text-foreground">Accumulated profit:</span> R{accumulatedProfit.toFixed(2)}
+              </p>
+            )}
             <p>
               <span className="font-semibold text-foreground">Note:</span> Each bet can have different odds (1.01 - 1.3)
             </p>
