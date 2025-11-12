@@ -78,3 +78,18 @@
 - [x] Update button styles with green theme
 - [x] Fix publish/deployment changes visibility
 - [x] Test all pages with new design
+
+## Deployment & Caching Fix
+- [ ] Clear browser cache and rebuild
+- [ ] Verify published app shows latest changes
+- [ ] Check service worker cache clearing
+
+## Financial Tracking Features
+- [ ] Add budget table to database schema
+- [ ] Create budget management procedures (CRUD)
+- [ ] Create Budget page with budget creation/editing
+- [ ] Create Money Usage page to track spending
+- [ ] Create Gambling Habits page with control tools
+- [ ] Add responsible gambling tips and warnings
+- [ ] Integrate budget with challenge tracking
+- [ ] Add spending limits and alerts

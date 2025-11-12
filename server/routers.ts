@@ -174,6 +174,104 @@ export const appRouter = router({
         return { success: true, profit: profit / 100 };
       }),
   }),
+
+  budget: router({
+    create: protectedProcedure
+      .input(z.object({
+        name: z.string().min(1),
+        amount: z.number().positive(),
+        period: z.enum(["daily", "weekly", "monthly", "yearly"]),
+        startDate: z.date(),
+        endDate: z.date(),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        const budgetId = await db.createBudget({
+          userId: ctx.user.id,
+          name: input.name,
+          amount: Math.round(input.amount * 100),
+          period: input.period,
+          spent: 0,
+          startDate: input.startDate,
+          endDate: input.endDate,
+          status: "active",
+        });
+        return { id: budgetId };
+      }),
+
+    list: protectedProcedure.query(async ({ ctx }) => {
+      const userBudgets = await db.getUserBudgets(ctx.user.id);
+      return userBudgets.map(b => ({
+        ...b,
+        amount: b.amount / 100,
+        spent: b.spent / 100,
+      }));
+    }),
+  }),
+
+  expense: router({
+    create: protectedProcedure
+      .input(z.object({
+        budgetId: z.number().optional(),
+        category: z.string().min(1),
+        amount: z.number().positive(),
+        description: z.string().optional(),
+        date: z.date(),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        const expenseId = await db.createExpense({
+          userId: ctx.user.id,
+          budgetId: input.budgetId,
+          category: input.category,
+          amount: Math.round(input.amount * 100),
+          description: input.description,
+          date: input.date,
+        });
+        return { id: expenseId };
+      }),
+
+    list: protectedProcedure.query(async ({ ctx }) => {
+      const userExpenses = await db.getUserExpenses(ctx.user.id);
+      return userExpenses.map(e => ({
+        ...e,
+        amount: e.amount / 100,
+      }));
+    }),
+  }),
+
+  habits: router({
+    get: protectedProcedure.query(async ({ ctx }) => {
+      const habits = await db.getOrCreateGamblingHabits(ctx.user.id);
+      return {
+        ...habits,
+        dailyLimit: habits.dailyLimit / 100,
+        weeklyLimit: habits.weeklyLimit / 100,
+        monthlyLimit: habits.monthlyLimit / 100,
+        todaySpent: habits.todaySpent / 100,
+        thisWeekSpent: habits.thisWeekSpent / 100,
+        thisMonthSpent: habits.thisMonthSpent / 100,
+      };
+    }),
+
+    update: protectedProcedure
+      .input(z.object({
+        dailyLimit: z.number().positive().optional(),
+        weeklyLimit: z.number().positive().optional(),
+        monthlyLimit: z.number().positive().optional(),
+        enableAlerts: z.boolean().optional(),
+        alertThreshold: z.number().min(0).max(100).optional(),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        const updates: any = {};
+        if (input.dailyLimit) updates.dailyLimit = Math.round(input.dailyLimit * 100);
+        if (input.weeklyLimit) updates.weeklyLimit = Math.round(input.weeklyLimit * 100);
+        if (input.monthlyLimit) updates.monthlyLimit = Math.round(input.monthlyLimit * 100);
+        if (input.enableAlerts !== undefined) updates.enableAlerts = input.enableAlerts;
+        if (input.alertThreshold !== undefined) updates.alertThreshold = input.alertThreshold;
+
+        await db.updateGamblingHabits(ctx.user.id, updates);
+        return { success: true };
+      }),
+  }),
 });
 
 export type AppRouter = typeof appRouter;

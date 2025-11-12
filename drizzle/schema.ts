@@ -57,3 +57,61 @@ export const bets = mysqlTable("bets", {
 
 export type Bet = typeof bets.$inferSelect;
 export type InsertBet = typeof bets.$inferInsert;
+
+/**
+ * Budget management - track monthly/weekly budgets
+ */
+export const budgets = mysqlTable("budgets", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull(),
+  name: varchar("name", { length: 255 }).notNull(), // e.g., "Monthly Betting Budget"
+  amount: int("amount").notNull(), // in cents
+  period: mysqlEnum("period", ["daily", "weekly", "monthly", "yearly"]).default("monthly").notNull(),
+  spent: int("spent").default(0).notNull(), // in cents
+  startDate: timestamp("startDate").notNull(),
+  endDate: timestamp("endDate").notNull(),
+  status: mysqlEnum("status", ["active", "completed", "exceeded"]).default("active").notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type Budget = typeof budgets.$inferSelect;
+export type InsertBudget = typeof budgets.$inferInsert;
+
+/**
+ * Money usage tracking - log where money is spent
+ */
+export const expenses = mysqlTable("expenses", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull(),
+  budgetId: int("budgetId"),
+  category: varchar("category", { length: 100 }).notNull(), // e.g., "Betting", "Food", "Transport"
+  amount: int("amount").notNull(), // in cents
+  description: text("description"),
+  date: timestamp("date").notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type Expense = typeof expenses.$inferSelect;
+export type InsertExpense = typeof expenses.$inferInsert;
+
+/**
+ * Gambling habits tracking - monitor and control gambling behavior
+ */
+export const gamblingHabits = mysqlTable("gamblingHabits", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull(),
+  dailyLimit: int("dailyLimit").notNull(), // in cents
+  weeklyLimit: int("weeklyLimit").notNull(), // in cents
+  monthlyLimit: int("monthlyLimit").notNull(), // in cents
+  todaySpent: int("todaySpent").default(0).notNull(), // in cents
+  thisWeekSpent: int("thisWeekSpent").default(0).notNull(), // in cents
+  thisMonthSpent: int("thisMonthSpent").default(0).notNull(), // in cents
+  enableAlerts: boolean("enableAlerts").default(true).notNull(),
+  alertThreshold: int("alertThreshold").default(80).notNull(), // percentage (0-100)
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type GamblingHabit = typeof gamblingHabits.$inferSelect;
+export type InsertGamblingHabit = typeof gamblingHabits.$inferInsert;

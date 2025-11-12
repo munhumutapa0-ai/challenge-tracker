@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { APP_TITLE, getLoginUrl } from "@/const";
 import { trpc } from "@/lib/trpc";
-import { Loader2, Plus, Target, TrendingUp, LogOut } from "lucide-react";
+import { Loader2, Plus, Target, TrendingUp, LogOut, PieChart, Wallet, Shield } from "lucide-react";
 import { useState } from "react";
 import { Link } from "wouter";
 import CreateChallengeDialog from "@/components/CreateChallengeDialog";
@@ -112,6 +112,27 @@ export default function Home() {
           </div>
         </div>
       </header>
+
+      {/* Navigation Menu */}
+      <nav className="border-b bg-card">
+        <div className="container py-3 flex gap-2 overflow-x-auto">
+          <Link href="/" className="px-4 py-2 rounded-lg bg-primary text-primary-foreground text-sm font-medium whitespace-nowrap">
+            Challenges
+          </Link>
+          <Link href="/budget" className="px-4 py-2 rounded-lg hover:bg-muted text-sm font-medium whitespace-nowrap flex items-center gap-2">
+            <PieChart className="h-4 w-4" />
+            Budget
+          </Link>
+          <Link href="/money-usage" className="px-4 py-2 rounded-lg hover:bg-muted text-sm font-medium whitespace-nowrap flex items-center gap-2">
+            <Wallet className="h-4 w-4" />
+            Money Usage
+          </Link>
+          <Link href="/gambling-habits" className="px-4 py-2 rounded-lg hover:bg-muted text-sm font-medium whitespace-nowrap flex items-center gap-2">
+            <Shield className="h-4 w-4" />
+            Gambling Habits
+          </Link>
+        </div>
+      </nav>
 
       <main className="container py-8">
         <div className="space-y-6">

@@ -1,6 +1,6 @@
 import { eq, and, desc } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/mysql2";
-import { InsertUser, users, challenges, bets, InsertChallenge, InsertBet } from "../drizzle/schema";
+import { InsertUser, users, challenges, bets, InsertChallenge, InsertBet, budgets, InsertBudget, expenses, InsertExpense, gamblingHabits, InsertGamblingHabit } from "../drizzle/schema";
 import { ENV } from './_core/env';
 
 let _db: ReturnType<typeof drizzle> | null = null;
@@ -158,4 +158,76 @@ export async function getBetById(betId: number) {
   
   const result = await db.select().from(bets).where(eq(bets.id, betId)).limit(1);
   return result.length > 0 ? result[0] : undefined;
+}
+
+// Budget queries
+export async function createBudget(budget: InsertBudget) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  
+  const result = await db.insert(budgets).values(budget);
+  return result[0].insertId;
+}
+
+export async function getUserBudgets(userId: number) {
+  const db = await getDb();
+  if (!db) return [];
+  
+  return await db.select().from(budgets).where(eq(budgets.userId, userId)).orderBy(desc(budgets.createdAt));
+}
+
+export async function updateBudgetSpent(budgetId: number, spent: number) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  
+  await db.update(budgets).set({ spent }).where(eq(budgets.id, budgetId));
+}
+
+// Expense queries
+export async function createExpense(expense: InsertExpense) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  
+  const result = await db.insert(expenses).values(expense);
+  return result[0].insertId;
+}
+
+export async function getUserExpenses(userId: number) {
+  const db = await getDb();
+  if (!db) return [];
+  
+  return await db.select().from(expenses).where(eq(expenses.userId, userId)).orderBy(desc(expenses.date));
+}
+
+// Gambling habits queries
+export async function getOrCreateGamblingHabits(userId: number) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  
+  const result = await db.select().from(gamblingHabits).where(eq(gamblingHabits.userId, userId)).limit(1);
+  
+  if (result.length > 0) {
+    return result[0];
+  }
+  
+  // Create default habits if none exist
+  const defaultHabits: InsertGamblingHabit = {
+    userId,
+    dailyLimit: 50000,
+    weeklyLimit: 300000,
+    monthlyLimit: 1000000,
+    enableAlerts: true,
+    alertThreshold: 80,
+  };
+  
+  await db.insert(gamblingHabits).values(defaultHabits);
+  const newResult = await db.select().from(gamblingHabits).where(eq(gamblingHabits.userId, userId)).limit(1);
+  return newResult[0];
+}
+
+export async function updateGamblingHabits(userId: number, updates: Partial<InsertGamblingHabit>) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  
+  await db.update(gamblingHabits).set(updates).where(eq(gamblingHabits.userId, userId));
 }
