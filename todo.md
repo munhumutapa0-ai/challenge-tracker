@@ -28,4 +28,15 @@
 ## Testing & Deployment
 - [x] Test complete betting flow
 - [x] Test compound calculation accuracy
-- [ ] Create checkpoint for deployment
+- [x] Create checkpoint for deployment
+
+## PWA & Branding Updates
+- [x] Change app name to "Challenge Tracker" (user needs to update in Settings UI)
+- [x] Generate app logo
+- [x] Create PWA manifest file
+- [x] Implement service worker for offline functionality
+- [x] Add install prompt for PWA
+- [x] Optimize mobile responsiveness
+- [x] Update favicon with new logo (user needs to update in Settings UI)
+- [x] Push to GitHub
+- [x] Publish application (ready for user to click Publish button)

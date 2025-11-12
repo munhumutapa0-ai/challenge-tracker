@@ -89,7 +89,7 @@ export default function ChallengeDetail() {
   return (
     <div className="min-h-screen bg-background">
       <header className="border-b bg-card sticky top-0 z-10">
-        <div className="container py-4 flex items-center justify-between">
+        <div className="container py-3 sm:py-4 flex items-center justify-between gap-2">
           <div className="flex items-center gap-4">
             <Button variant="ghost" size="sm" asChild>
               <Link href="/">
@@ -97,7 +97,7 @@ export default function ChallengeDetail() {
                 Back
               </Link>
             </Button>
-            <h1 className="text-2xl font-bold text-foreground">{challenge.name}</h1>
+            <h1 className="text-lg sm:text-xl md:text-2xl font-bold text-foreground truncate">{challenge.name}</h1>
           </div>
           <span
             className={`text-sm px-3 py-1 rounded-full font-medium ${
@@ -115,18 +115,18 @@ export default function ChallengeDetail() {
 
       <main className="container py-8 space-y-6">
         {/* Progress Overview */}
-        <div className="grid md:grid-cols-4 gap-4">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4">
           <Card className="bg-card text-card-foreground">
             <CardHeader className="pb-3">
               <CardDescription>Current Balance</CardDescription>
-              <CardTitle className="text-2xl">R{currentBalance.toFixed(2)}</CardTitle>
+              <CardTitle className="text-xl sm:text-2xl">R{currentBalance.toFixed(2)}</CardTitle>
             </CardHeader>
           </Card>
 
           <Card className="bg-card text-card-foreground">
             <CardHeader className="pb-3">
               <CardDescription>Target Amount</CardDescription>
-              <CardTitle className="text-2xl text-primary">R{challenge.targetAmount.toFixed(2)}</CardTitle>
+              <CardTitle className="text-xl sm:text-2xl text-primary">R{challenge.targetAmount.toFixed(2)}</CardTitle>
             </CardHeader>
           </Card>
 
@@ -150,7 +150,7 @@ export default function ChallengeDetail() {
         {/* Progress Bar */}
         <Card className="bg-card text-card-foreground">
           <CardHeader>
-            <div className="flex items-center justify-between">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-0">
               <div>
                 <CardTitle>Challenge Progress</CardTitle>
                 <CardDescription>
@@ -158,7 +158,7 @@ export default function ChallengeDetail() {
                 </CardDescription>
               </div>
               {challenge.status === "active" && completedBets < challenge.daysTotal && (
-                <Button onClick={() => setAddBetDialogOpen(true)}>
+                <Button onClick={() => setAddBetDialogOpen(true)} size="sm" className="w-full sm:w-auto">
                   <Plus className="h-4 w-4 mr-2" />
                   Add Bet
                 </Button>

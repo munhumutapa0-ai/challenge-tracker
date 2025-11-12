@@ -29,8 +29,8 @@ export default function Home() {
     return (
       <div className="min-h-screen flex flex-col">
         <header className="border-b bg-card">
-          <div className="container py-4 flex items-center justify-between">
-            <h1 className="text-2xl font-bold text-foreground">{APP_TITLE}</h1>
+          <div className="container py-3 sm:py-4 flex items-center justify-between gap-2">
+            <h1 className="text-xl sm:text-2xl font-bold text-foreground truncate">{APP_TITLE}</h1>
             <Button asChild>
               <a href={getLoginUrl()}>Sign In</a>
             </Button>
@@ -40,10 +40,10 @@ export default function Home() {
         <main className="flex-1 flex items-center justify-center bg-gradient-to-br from-background to-muted">
           <div className="container max-w-4xl text-center space-y-8 py-20">
             <div className="space-y-4">
-              <h2 className="text-5xl font-bold text-foreground">
+              <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-foreground">
                 Track Your Betting Challenge
               </h2>
-              <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+              <p className="text-base sm:text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto px-4">
                 Create compound betting challenges, track your progress, and reach your target amount with disciplined daily bets.
               </p>
             </div>
@@ -98,10 +98,10 @@ export default function Home() {
   return (
     <div className="min-h-screen bg-background">
       <header className="border-b bg-card sticky top-0 z-10">
-        <div className="container py-4 flex items-center justify-between">
-          <h1 className="text-2xl font-bold text-foreground">{APP_TITLE}</h1>
-          <div className="flex items-center gap-4">
-            <span className="text-sm text-muted-foreground">Welcome, {user?.name}</span>
+        <div className="container py-3 sm:py-4 flex items-center justify-between gap-2">
+          <h1 className="text-xl sm:text-2xl font-bold text-foreground truncate">{APP_TITLE}</h1>
+          <div className="flex items-center gap-2 sm:gap-4">
+            <span className="hidden sm:inline text-sm text-muted-foreground">Welcome, {user?.name}</span>
             <Button onClick={() => setCreateDialogOpen(true)} size="sm">
               <Plus className="h-4 w-4 mr-2" />
               New Challenge
