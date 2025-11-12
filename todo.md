@@ -70,3 +70,11 @@
 - [x] Create EditChallengeDialog component
 - [x] Verify odds input is visible in AddBetDialog
 - [x] Test edit and delete functionality
+
+## Design & UI Beautification
+- [x] Update CSS theme to dark mode with green accents (22software style)
+- [x] Add logout button to header
+- [x] Beautify cards and components with new design
+- [x] Update button styles with green theme
+- [x] Fix publish/deployment changes visibility
+- [x] Test all pages with new design

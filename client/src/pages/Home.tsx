@@ -3,13 +3,13 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { APP_TITLE, getLoginUrl } from "@/const";
 import { trpc } from "@/lib/trpc";
-import { Loader2, Plus, Target, TrendingUp } from "lucide-react";
+import { Loader2, Plus, Target, TrendingUp, LogOut } from "lucide-react";
 import { useState } from "react";
 import { Link } from "wouter";
 import CreateChallengeDialog from "@/components/CreateChallengeDialog";
 
 export default function Home() {
-  const { user, loading, isAuthenticated } = useAuth();
+  const { user, loading, isAuthenticated, logout } = useAuth();
   const [createDialogOpen, setCreateDialogOpen] = useState(false);
   
   const { data: challenges, isLoading: challengesLoading } = trpc.challenge.list.useQuery(
@@ -105,6 +105,9 @@ export default function Home() {
             <Button onClick={() => setCreateDialogOpen(true)} size="sm">
               <Plus className="h-4 w-4 mr-2" />
               New Challenge
+            </Button>
+            <Button onClick={() => logout()} variant="outline" size="sm" title="Logout">
+              <LogOut className="h-4 w-4" />
             </Button>
           </div>
         </div>
