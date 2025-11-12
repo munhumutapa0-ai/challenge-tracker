@@ -1,11 +1,10 @@
-import { eq } from "drizzle-orm";
+import { eq, and, desc } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/mysql2";
-import { InsertUser, users } from "../drizzle/schema";
+import { InsertUser, users, challenges, bets, InsertChallenge, InsertBet } from "../drizzle/schema";
 import { ENV } from './_core/env';
 
 let _db: ReturnType<typeof drizzle> | null = null;
 
-// Lazily create the drizzle instance so local tooling can run without a DB.
 export async function getDb() {
   if (!_db && process.env.DATABASE_URL) {
     try {
@@ -89,4 +88,74 @@ export async function getUserByOpenId(openId: string) {
   return result.length > 0 ? result[0] : undefined;
 }
 
-// TODO: add feature queries here as your schema grows.
+// Challenge queries
+export async function createChallenge(challenge: InsertChallenge) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  
+  const result = await db.insert(challenges).values(challenge);
+  return result[0].insertId;
+}
+
+export async function getUserChallenges(userId: number) {
+  const db = await getDb();
+  if (!db) return [];
+  
+  return await db.select().from(challenges).where(eq(challenges.userId, userId)).orderBy(desc(challenges.createdAt));
+}
+
+export async function getChallengeById(challengeId: number) {
+  const db = await getDb();
+  if (!db) return undefined;
+  
+  const result = await db.select().from(challenges).where(eq(challenges.id, challengeId)).limit(1);
+  return result.length > 0 ? result[0] : undefined;
+}
+
+export async function updateChallengeStatus(challengeId: number, status: "active" | "completed" | "failed") {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  
+  await db.update(challenges).set({ status }).where(eq(challenges.id, challengeId));
+}
+
+export async function deleteChallenge(challengeId: number) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  
+  // Delete all bets first
+  await db.delete(bets).where(eq(bets.challengeId, challengeId));
+  // Then delete challenge
+  await db.delete(challenges).where(eq(challenges.id, challengeId));
+}
+
+// Bet queries
+export async function createBet(bet: InsertBet) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  
+  const result = await db.insert(bets).values(bet);
+  return result[0].insertId;
+}
+
+export async function getChallengeBets(challengeId: number) {
+  const db = await getDb();
+  if (!db) return [];
+  
+  return await db.select().from(bets).where(eq(bets.challengeId, challengeId)).orderBy(bets.dayNumber);
+}
+
+export async function updateBetResult(betId: number, result: "win" | "loss", profit: number) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  
+  await db.update(bets).set({ result, profit }).where(eq(bets.id, betId));
+}
+
+export async function getBetById(betId: number) {
+  const db = await getDb();
+  if (!db) return undefined;
+  
+  const result = await db.select().from(bets).where(eq(bets.id, betId)).limit(1);
+  return result.length > 0 ? result[0] : undefined;
+}
