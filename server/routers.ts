@@ -113,12 +113,21 @@ export const appRouter = router({
         teamName: z.string().min(1),
         matchDetails: z.string().optional(),
         stakeAmount: z.number().positive(),
-        odds: z.number().min(1.01).max(1.3),
+        odds: z.number().min(1.01),
       }))
       .mutation(async ({ ctx, input }) => {
         const challenge = await db.getChallengeById(input.challengeId);
         if (!challenge || challenge.userId !== ctx.user.id) {
           throw new TRPCError({ code: "FORBIDDEN" });
+        }
+
+        // Validate odds don't exceed challenge maximum
+        const maxOdds = challenge.odds / 100; // Convert from stored format
+        if (input.odds > maxOdds) {
+          throw new TRPCError({
+            code: "BAD_REQUEST",
+            message: `Odds cannot exceed the challenge maximum of ${maxOdds.toFixed(2)}`,
+          });
         }
 
         const betId = await db.createBet({

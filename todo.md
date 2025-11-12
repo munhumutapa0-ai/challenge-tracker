@@ -57,3 +57,9 @@
 - [x] Update ChallengeDetail to show strategy info
 - [x] Update next stake calculation for take-profit strategy
 - [x] Test both strategies with different odds
+
+## Odds Validation
+- [x] Add odds validation in AddBetDialog (max = challenge odds)
+- [x] Add backend validation for odds limit
+- [x] Display max odds hint in AddBetDialog
+- [x] Show error if user exceeds challenge odds limit

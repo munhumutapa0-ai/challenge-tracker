@@ -307,6 +307,7 @@ export default function ChallengeDetail() {
         challengeId={challengeId}
         nextDayNumber={bets.length + 1}
         nextStake={nextStake}
+        maxOdds={challenge.odds}
       />
     </div>
   );

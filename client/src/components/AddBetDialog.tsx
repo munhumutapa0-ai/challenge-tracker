@@ -21,6 +21,7 @@ interface AddBetDialogProps {
   challengeId: number;
   nextDayNumber: number;
   nextStake: number;
+  maxOdds: number; // Challenge's maximum odds
 }
 
 export default function AddBetDialog({
@@ -29,6 +30,7 @@ export default function AddBetDialog({
   challengeId,
   nextDayNumber,
   nextStake,
+  maxOdds,
 }: AddBetDialogProps) {
   const [teamName, setTeamName] = useState("");
   const [matchDetails, setMatchDetails] = useState("");
@@ -63,8 +65,12 @@ export default function AddBetDialog({
     }
 
     const oddsValue = parseFloat(odds);
-    if (isNaN(oddsValue) || oddsValue < 1.01 || oddsValue > 1.3) {
-      toast.error("Odds must be between 1.01 and 1.3");
+    if (isNaN(oddsValue) || oddsValue < 1.01) {
+      toast.error("Odds must be at least 1.01");
+      return;
+    }
+    if (oddsValue > maxOdds) {
+      toast.error(`Odds cannot exceed the challenge maximum of ${maxOdds.toFixed(2)}`);
       return;
     }
 
@@ -115,18 +121,19 @@ export default function AddBetDialog({
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="odds">Odds (1.01 - 1.3) *</Label>
+              <Label htmlFor="odds">Odds (1.01 - {maxOdds.toFixed(2)}) *</Label>
               <Input
                 id="odds"
                 type="number"
                 step="0.01"
                 min="1.01"
-                max="1.3"
-                placeholder="1.3"
+                max={maxOdds}
+                placeholder={maxOdds.toFixed(2)}
                 value={odds}
                 onChange={(e) => setOdds(e.target.value)}
                 required
               />
+              <p className="text-xs text-muted-foreground">Maximum allowed: {maxOdds.toFixed(2)}</p>
             </div>
 
             <div className="bg-muted p-3 rounded-lg text-sm">
